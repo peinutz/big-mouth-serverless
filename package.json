@@ -1,0 +1,17 @@
+{
+  "name": "big-mouth-serverless",
+  "version": "1.0.0",
+  "description": "Serverless architecture experiment",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "serverless": "1.33.2"
+  },
+  "author": "Pedro Fernandes",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.3"
+  }
+}
