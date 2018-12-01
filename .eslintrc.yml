@@ -1,0 +1,16 @@
+env:
+  browser: true
+  commonjs: true
+  es6: true
+extends: "eslint:recommended"
+parserOptions:
+  ecmaVersion: 2017
+rules:
+  linebreak-style:
+    - 0
+    - windows
+  semi:
+    - error
+    - always
+  no-console:
+    - 0

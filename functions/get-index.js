@@ -1,7 +1,14 @@
 'use strict';
 
-const Promise = require("bluebird")
+const Promise = require("bluebird");
 const fs = Promise.promisifyAll(require('fs'));
+const mustache = require("mustache");
+const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+// eslint-disable-next-line no-undef
+const restaurantsApiRoot = process.env.restaurants_api;
+const axios = require('axios');
+const aws4 = require('aws4');
+const URL = require('url');
 
 var html;
 
@@ -13,8 +20,40 @@ async function loadHTML() {
   return html;
 }
 
-module.exports.handler = async (event, context) => {
-  html = await loadHTML();
+async function getRestaurants() {
+
+  let url = URL.parse(restaurantsApiRoot);
+  let opts = {
+    host: url.hostname,
+    path: url.pathname
+  };
+
+  aws4.sign(opts);
+
+  let headers = {
+    'headers': {
+      'Host': opts.headers['Host'],
+      "X-Amz-Date": opts.headers['Host'],
+      "Authorization": opts.headers['Authorization'],
+      "X-Amz-Security-Token": opts.headers['X-Amz-Security-Token']
+    }
+  };
+
+  var restaurants = await axios.get(restaurantsApiRoot, headers);
+
+  return restaurants.data;
+}
+
+// eslint-disable-next-line no-unused-vars
+module.exports.handler = async (_event, _context) => {
+  let template = await loadHTML();
+  let restaurants = await getRestaurants();
+  console.log(restaurants);
+  let dayOfWeek = daysOfWeek[new Date().getDay()];
+  let html = mustache.render(template, {
+    dayOfWeek,
+    restaurants
+  });
 
   return {
     "statusCode": 200,
