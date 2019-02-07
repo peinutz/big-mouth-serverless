@@ -12,19 +12,20 @@ async function findRestaurantsByTheme(theme, count) {
   let req = {
     TableName: tableName,
     Limit: count,
-    FilterExpression: "contains(themes, :theme)"
+    FilterExpression: "contains(themes, :theme)",
+    ExpressionAttributeValues : {":theme" : theme }
   };
 
   let response = await dynamoDB.scan(req).promise();
-  console.log("response: " + response);
+
   return response.Items;
 }
 
 // eslint-disable-next-line no-unused-vars
 module.exports.handler = async (_event, _context) => {
-  let req = JSON.parse(event.body);
+  let req = JSON.parse(_event.body);
   let restaurants = await findRestaurantsByTheme(req.theme, count);
-  console.log(restaurants);
+
 
   return {
     statusCode: 200,

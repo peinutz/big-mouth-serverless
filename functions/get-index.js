@@ -47,10 +47,13 @@ async function getRestaurants() {
     headers: {
       Host: opts.headers["Host"],
       "X-Amz-Date": opts.headers["Host"],
-      Authorization: opts.headers["Authorization"],
-      "X-Amz-Security-Token": opts.headers["X-Amz-Security-Token"]
+      Authorization: opts.headers["Authorization"]
     }
   };
+
+  if(opts.headers["X-Amz-Security-Token"]) {
+      headers.headers["X-Amz-Security-Token"] = opts.headers["X-Amz-Security-Token"]
+  }
 
   var restaurants = await axios.get(restaurantsApiRoot, headers);
 
@@ -59,9 +62,10 @@ async function getRestaurants() {
 
 // eslint-disable-next-line no-unused-vars
 module.exports.handler = async (_event, _context) => {
+  console.log("inside handler")
   let template = await loadHTML();
   let restaurants = await getRestaurants();
-  console.log(restaurants);
+
   let dayOfWeek = daysOfWeek[new Date().getDay()];
 
   let view = {
@@ -70,15 +74,16 @@ module.exports.handler = async (_event, _context) => {
     awsRegion,
     cognitoUserPoolId,
     cognitoClientId,
-    searchUrl: `${restaurantsApiRoot}`
+    searchUrl: `${restaurantsApiRoot}/search`
   };
 
   let html = mustache.render(template, view);
 
+    console.log("returning handler")
   return {
     statusCode: 200,
     headers: {
-      "Content-Type": "text/html; charset=UTF-8"
+      "content-type": "text/html; charset=UTF-8"
     },
     body: html
   };

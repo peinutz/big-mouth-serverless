@@ -15,14 +15,13 @@ async function getRestaurants(count) {
   };
 
   let response = await dynamoDB.scan(req).promise();
-  console.log("response: " + response);
+
   return response.Items;
 }
 
 // eslint-disable-next-line no-unused-vars
 module.exports.handler = async (_event, _context) => {
   let restaurants = await getRestaurants(count);
-  console.log(restaurants);
 
   return {
     "statusCode": 200,

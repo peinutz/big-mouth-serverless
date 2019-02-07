@@ -4,10 +4,14 @@
   "description": "Serverless architecture experiment",
   "main": "handler.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "integration-test": "./node_modules/.bin/mocha tests/test_cases --reporter spec --timeout 5000"
   },
   "devDependencies": {
     "aws-sdk": "^2.363.0",
+    "chai": "^4.2.0",
+    "cheerio": "^1.0.0-rc.2",
+    "mocha": "^5.2.0",
     "serverless": "1.33.2",
     "serverless-pseudo-parameters": "^2.2.0"
   },
@@ -17,6 +21,8 @@
     "aws4": "^1.8.0",
     "axios": "^0.18.0",
     "bluebird": "^3.5.3",
+    "chance": "^1.0.18",
+    "loadash": "^1.0.0",
     "mustache": "^3.0.1"
   }
 }
