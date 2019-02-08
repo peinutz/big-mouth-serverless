@@ -4,5 +4,6 @@ phases:
     build:
       commands:
           - chmod +x build.sh
-          - ./build.sh int-test
+          - npm install
+          - npm run integration-test
           - ./build.sh deploy dev
