@@ -5,7 +5,8 @@
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "integration-test": "./node_modules/.bin/mocha tests/test_cases --reporter spec --timeout 5000"
+    "integration-test": "./node_modules/.bin/mocha tests/test_cases --reporter spec --timeout 5000",
+    "deploy-dev" : "'node_modules/.bin/sls' deploy -s dev"
   },
   "devDependencies": {
     "aws-sdk": "^2.363.0",

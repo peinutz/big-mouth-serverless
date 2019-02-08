@@ -3,7 +3,7 @@ version: 0.2
 phases:
     build:
       commands:
-          - chmod +x build.sh
           - npm install
           - npm run integration-test
-          - ./build.sh deploy dev
+          - npm install
+          - npm run deploy-dev
