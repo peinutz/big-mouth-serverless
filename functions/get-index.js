@@ -62,7 +62,6 @@ async function getRestaurants() {
 
 // eslint-disable-next-line no-unused-vars
 module.exports.handler = async (_event, _context) => {
-  console.log("inside handler")
   let template = await loadHTML();
   let restaurants = await getRestaurants();
 
@@ -79,7 +78,6 @@ module.exports.handler = async (_event, _context) => {
 
   let html = mustache.render(template, view);
 
-    console.log("returning handler")
   return {
     statusCode: 200,
     headers: {

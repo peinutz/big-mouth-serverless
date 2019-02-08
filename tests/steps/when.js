@@ -5,7 +5,6 @@ var axios = require('axios');
 
 let we_invoke_get_index = () => {
 
-    console.log("we_invoke_get_index")
     let handler = require(`${APP_ROOT}/functions/get-index`).handler;
     let context = {};
     let event = {};
@@ -15,7 +14,6 @@ let we_invoke_get_index = () => {
 
 let we_invoke_search_restaurants = async (user, theme) => {
 
-    console.log("we_invoke_search_restaurants");
 
     var config = {
         headers: {'Authorization': user.idToken}
