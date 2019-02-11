@@ -25,7 +25,7 @@ module.exports.handler = async (_event, _context) => {
 
         console.log(`Notified restaurant [${order.restaurantName}] of order [${order.orderId}]`);
 
-        let data = _.clone(order);
+        let data = {...order};
         data.eventType = 'restaurant_notified'
 
         let putRecordReq = {
@@ -41,6 +41,5 @@ module.exports.handler = async (_event, _context) => {
     }
 
     return {
-
     }
 };
