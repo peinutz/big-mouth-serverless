@@ -73,5 +73,19 @@
       "--data",
       "{}"
     ]
+  },
+  {
+    "type": "node",
+    "request": "launch",
+    "name": "place-order",
+    "program": "${workspaceFolder}/node_modules/serverless/bin/serverless",
+    "args": [
+      "invoke",
+      "local",
+      "-f",
+      "place-order",
+      "--data",
+      "{}"
+    ]
   }]
 }

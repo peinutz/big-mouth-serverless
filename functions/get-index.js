@@ -14,6 +14,7 @@ const daysOfWeek = [
 ];
 // eslint-disable-next-line no-undef
 const restaurantsApiRoot = process.env.restaurants_api;
+const ordersApiRoot = process.env.order_api;
 const axios = require("axios");
 const aws4 = require("aws4");
 const URL = require("url");
@@ -73,7 +74,8 @@ module.exports.handler = async (_event, _context) => {
     awsRegion,
     cognitoUserPoolId,
     cognitoClientId,
-    searchUrl: `${restaurantsApiRoot}/search`
+    searchUrl: `${restaurantsApiRoot}/search`,
+    placeOrderUrl: `${ordersApiRoot}`
   };
 
   let html = mustache.render(template, view);
