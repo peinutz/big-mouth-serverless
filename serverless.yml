@@ -23,11 +23,10 @@ provider:
     - Effect: Allow
       Action:
         - sns:Publish
-      Resource: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification
-    - Effect: Allow
-      Action:
-        - sns:Publish
-      Resource: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:user-notification
+      Resource:
+        - arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification
+        - arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification-retry
+        - arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:user-notification
 
 functions:
   get-index:
@@ -73,6 +72,15 @@ functions:
     environment:
       order_events_stream: order-events-second
 
+  fulfill-order:
+    handler: functions/funfill-order.handler
+    events:
+      - http:
+          path: /orders/complete
+          method: post
+    environment:
+      order_events_stream: order-events-second
+
   notify-restaurant:
     handler: functions/notify-restaurant.handler
     events:
@@ -81,6 +89,16 @@ functions:
     environment:
       order_events_stream: order-events-second
       restaurant_notification_topic: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification
+      restaurant_retry_topic: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification-retry
+
+  retry-notify-restaurant:
+    handler: functions/retry-notify-restaurant.handler
+    events:
+      - sns: restaurant-notification-retry
+    environment:
+      order_events_stream: order-events-second
+      restaurant_notification_topic: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification
+    onError: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification-dql
 
   notify-user:
     handler: functions/notify-user.handler
@@ -128,6 +146,12 @@ resources:
       Properties:
         DisplayName: restaurant-notification
         TopicName: restaurant-notification
+
+    restaurantNotificationDQLTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: restaurant-notification-dql
+        TopicName: restaurant-notification-dql
 
     userNotificationTopic:
       Type: AWS::SNS::Topic
