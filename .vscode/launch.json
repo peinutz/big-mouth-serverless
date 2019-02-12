@@ -101,5 +101,19 @@
       "-p",
       "examples/notify-restaurant.json"
     ]
+  },
+  {
+    "type": "node",
+    "request": "launch",
+    "name": "accept-order",
+    "program": "${workspaceFolder}/node_modules/serverless/bin/serverless",
+    "args": [
+      "invoke",
+      "local",
+      "-f",
+      "accept-order",
+      "-d",
+      "{\"orderId\":\"c9f8390a-2e36-5af7-9b0c-92a80e864a9a\",\"userEmail\":\"pedromarado@gmail.com\",\"restaurantName\":\"Freddy's BBQ Joint\",\"eventType\":\"order_placed\"}"
+    ]
   }]
 }
