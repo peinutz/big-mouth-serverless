@@ -1,38 +1,40 @@
-'use strict';
+"use strict";
 
-const AWS = require('aws-sdk');
+const AWS = require("aws-sdk");
 const kinesis = new AWS.Kinesis();
 const streamName = process.env.order_events_stream;
-const chance = require('chance').Chance();
+const chance = require("chance").Chance();
+const log = require("../lib/log");
 
 module.exports.handler = async (_event, _context) => {
-	let restaurantName = JSON.parse(_event.body).restaurantName;
+  let restaurantName = JSON.parse(_event.body).restaurantName;
+  log.debug("Request body is a valid JSON", { requestBody: _event.body });
 
-	let userEmail = _event.requestContext.authorizer.claims.email;
+  let userEmail = _event.requestContext.authorizer.claims.email;
 
-	let orderId = chance.guid();
+  let orderId = chance.guid();
 
-    console.log(`Placing [${orderId}] to [${restaurantName}] from user [${userEmail}]`);
+  log.debug("placing order", { orderId, restaurantName, userEmail });
 
-    let data = {
-        orderId,
-        userEmail,
-        restaurantName,
-        eventType: 'order_placed'
-    }
-    
-    let putReq = {
-        Data: JSON.stringify(data),
-        PartitionKey: orderId,
-        StreamName: streamName
-    }
+  let data = {
+    orderId,
+    userEmail,
+    restaurantName,
+    eventType: "order_placed"
+  };
 
-    await kinesis.putRecord(putReq).promise();
+  let putReq = {
+    Data: JSON.stringify(data),
+    PartitionKey: orderId,
+    StreamName: streamName
+  };
 
-    console.log('published order_placed event to kinesis');
+  await kinesis.putRecord(putReq).promise();
 
-    return {
-        statusCode: 200,
-        body: JSON.stringify({ orderId })
-    }
+  log.debug("published  event to kinesis", { eventName: "order_placed" });
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ orderId })
+  };
 };
