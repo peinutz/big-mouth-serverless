@@ -5,9 +5,17 @@ plugins:
   - serverless-sam
   - serverless-iam-roles-per-function
 
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  logLevel:
+    prod: WARN
+    default: DEBUG
+
 provider:
   name: aws
   runtime: nodejs8.10
+  environment:
+    log_level: ${self:custom.logLevel.${self:custom.stage}, self:custom.logLevel.default}
 
 functions:
   get-index:
@@ -22,10 +30,10 @@ functions:
       cognito_user_pool_id: us-east-1_gjBnaWfuj
       cognito_client_id: 6ncstur64s462sdeon15eurpa3
     iamRoleStatements:
-        - Effect: Allow
-          Action:
-            - execute-api:Invoke
-          Resource: arn:aws:execute-api:#{AWS::Region}:#{AWS::AccountId}:*/*/GET/restaurants
+      - Effect: Allow
+        Action:
+          - execute-api:Invoke
+        Resource: arn:aws:execute-api:#{AWS::Region}:#{AWS::AccountId}:*/*/GET/restaurants
 
   get-reastaurants:
     handler: functions/get-restaurants.handler
