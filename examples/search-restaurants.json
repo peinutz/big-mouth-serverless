@@ -1,5 +1,5 @@
 {
-    "body": "{\"theme:\": \"cartoon\"}",
+    "body": "{\"theme\": \"cartoon\"}",
     "resource": "/{proxy+}",
     "path": "/path/to/resource",
     "httpMethod": "POST",

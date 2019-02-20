@@ -25,19 +25,19 @@
         "-f",
         "get-reastaurants",
         "--data",
-        "{}"
+        "{}",
       ]
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "search-restaurants",
+      "name": "search-restaurant",
       "program" : "${workspaceFolder}/node_modules/serverless/bin/serverless",
       "args": [
         "invoke",
         "local",
         "-f",
-        "get-reastaurants",
+        "search-restaurant",
         "-p",
         "examples/search-restaurants.json"
       ],

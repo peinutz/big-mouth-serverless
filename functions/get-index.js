@@ -18,6 +18,10 @@ const ordersApiRoot = process.env.order_api;
 const axios = require("axios");
 const aws4 = require("aws4");
 const URL = require("url");
+const middy = require("middy");
+const log = require("../lib/log");
+
+const sampleLogging = require("../middleware/sample-logging");
 
 // eslint-disable-next-line no-undef
 const awsRegion = process.env.AWS_REGION;
@@ -52,8 +56,9 @@ async function getRestaurants() {
     }
   };
 
-  if(opts.headers["X-Amz-Security-Token"]) {
-      headers.headers["X-Amz-Security-Token"] = opts.headers["X-Amz-Security-Token"]
+  if (opts.headers["X-Amz-Security-Token"]) {
+    headers.headers["X-Amz-Security-Token"] =
+      opts.headers["X-Amz-Security-Token"];
   }
 
   var restaurants = await axios.get(restaurantsApiRoot, headers);
@@ -62,7 +67,7 @@ async function getRestaurants() {
 }
 
 // eslint-disable-next-line no-unused-vars
-module.exports.handler = async (_event, _context) => {
+const handler = async (_event, _context) => {
   let template = await loadHTML();
   let restaurants = await getRestaurants();
 
@@ -78,6 +83,8 @@ module.exports.handler = async (_event, _context) => {
     placeOrderUrl: `${ordersApiRoot}`
   };
 
+  log.debug("view object", { view });
+
   let html = mustache.render(template, view);
 
   return {
@@ -91,3 +98,5 @@ module.exports.handler = async (_event, _context) => {
   // Use this code if you don't use the http event with the LAMBDA-PROXY integration
   // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
 };
+
+module.exports.handler = middy(handler).use(sampleLogging({ sampleRate: 0.5 }));

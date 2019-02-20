@@ -26,6 +26,7 @@
     "bluebird": "^3.5.3",
     "chance": "^1.0.18",
     "loadash": "^1.0.0",
+    "middy": "^0.22.1",
     "mustache": "^3.0.1"
   }
 }

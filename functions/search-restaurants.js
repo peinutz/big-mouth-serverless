@@ -2,6 +2,9 @@
 
 const AWS = require("aws-sdk");
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
+const middy = require("middy");
+const log = require("../lib/log");
+const sampleLogging = require("../middleware/sample-logging");
 
 // eslint-disable-next-line no-undef
 const count = process.env.defaultResults || 8;
@@ -13,7 +16,7 @@ async function findRestaurantsByTheme(theme, count) {
     TableName: tableName,
     Limit: count,
     FilterExpression: "contains(themes, :theme)",
-    ExpressionAttributeValues : {":theme" : theme }
+    ExpressionAttributeValues: { ":theme": theme }
   };
 
   let response = await dynamoDB.scan(req).promise();
@@ -22,13 +25,14 @@ async function findRestaurantsByTheme(theme, count) {
 }
 
 // eslint-disable-next-line no-unused-vars
-module.exports.handler = async (_event, _context) => {
+const handler = async (_event, _context) => {
   let req = JSON.parse(_event.body);
   let restaurants = await findRestaurantsByTheme(req.theme, count);
-
-
+  log.debug("restaurants list", { restaurants });
   return {
     statusCode: 200,
     body: JSON.stringify(restaurants)
   };
 };
+
+module.exports.handler = handler; //middy(handler).use(sampleLogging({ sampleRate: 1 }));
