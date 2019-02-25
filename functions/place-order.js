@@ -5,8 +5,12 @@ const kinesis = new AWS.Kinesis();
 const streamName = process.env.order_events_stream;
 const chance = require("chance").Chance();
 const log = require("../lib/log");
+const middy = require("middy");
+const sampleLogging = require("../middleware/sample-logging");
+const flushMetrics = require("../middleware/flush-metrics");
 
-module.exports.handler = async (_event, _context) => {
+// eslint-disable-next-line no-unused-vars
+const handler = async (_event, _context) => {
   let restaurantName = JSON.parse(_event.body).restaurantName;
   log.debug("Request body is a valid JSON", { requestBody: _event.body });
 
@@ -38,3 +42,7 @@ module.exports.handler = async (_event, _context) => {
     body: JSON.stringify({ orderId })
   };
 };
+
+module.exports.handler = middy(handler)
+  .use(sampleLogging({ sampleRate: 1 }))
+  .use(flushMetrics);

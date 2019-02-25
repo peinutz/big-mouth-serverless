@@ -35,4 +35,4 @@ const handler = async (_event, _context) => {
   };
 };
 
-module.exports.handler = handler; //middy(handler).use(sampleLogging({ sampleRate: 1 }));
+module.exports.handler = middy(handler).use(sampleLogging({ sampleRate: 1 }));

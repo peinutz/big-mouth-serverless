@@ -12,6 +12,7 @@
     "aws-sdk": "^2.363.0",
     "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.2",
+    "co": "^4.6.0",
     "mocha": "^5.2.0",
     "serverless": "^1.33.2",
     "serverless-iam-roles-per-function": "^1.0.4",
