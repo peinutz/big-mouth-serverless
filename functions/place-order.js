@@ -8,6 +8,7 @@ const log = require("../lib/log");
 const middy = require("middy");
 const sampleLogging = require("../middleware/sample-logging");
 const flushMetrics = require("../middleware/flush-metrics");
+const cloudwatch = require("../lib/cloudwatch");
 
 // eslint-disable-next-line no-unused-vars
 const handler = async (_event, _context) => {
@@ -33,7 +34,9 @@ const handler = async (_event, _context) => {
     StreamName: streamName
   };
 
-  await kinesis.putRecord(putReq).promise();
+  await cloudwatch.trackExecTime("KinesisPutRecordLatency", () =>
+    kinesis.putRecord(putReq).promise()
+  );
 
   log.debug("published  event to kinesis", { eventName: "order_placed" });
 

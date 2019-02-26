@@ -1,7 +1,8 @@
-'use strict';
+"use strict";
 
-const AWS = require('aws-sdk');
+const AWS = require("aws-sdk");
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
+const cloudwatch = require("../lib/cloudwatch");
 
 // eslint-disable-next-line no-undef
 const count = process.env.defaultResults || 8;
@@ -14,7 +15,9 @@ async function getRestaurants(count) {
     Limit: count
   };
 
-  let response = await dynamoDB.scan(req).promise();
+  let response = await cloudwatch.trackExecTime("DynamoDBScanLatency", () =>
+    dynamoDB.scan(req).promise()
+  );
 
   return response.Items;
 }
@@ -23,9 +26,10 @@ async function getRestaurants(count) {
 module.exports.handler = async (_event, _context) => {
   let restaurants = await getRestaurants(count);
 
-  return {
-    "statusCode": 200,
-    "body": JSON.stringify(restaurants)
-  };
+  cloudwatch.incrCount("RestaurantsReturned", restaurants.lenght);
 
+  return {
+    statusCode: 200,
+    body: JSON.stringify(restaurants)
+  };
 };

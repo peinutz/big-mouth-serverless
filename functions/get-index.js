@@ -20,7 +20,7 @@ const aws4 = require("aws4");
 const URL = require("url");
 const middy = require("middy");
 const log = require("../lib/log");
-
+const cloudwatch = require("../lib/cloudwatch");
 const sampleLogging = require("../middleware/sample-logging");
 
 // eslint-disable-next-line no-undef
@@ -69,7 +69,10 @@ async function getRestaurants() {
 // eslint-disable-next-line no-unused-vars
 const handler = async (_event, _context) => {
   let template = await loadHTML();
-  let restaurants = await getRestaurants();
+  let restaurants = await cloudwatch.trackExecTime(
+    "GetRestaurantsLatency",
+    () => getRestaurants()
+  );
 
   let dayOfWeek = daysOfWeek[new Date().getDay()];
 
@@ -86,6 +89,8 @@ const handler = async (_event, _context) => {
   log.debug("view object", { view });
 
   let html = mustache.render(template, view);
+
+  cloudwatch.incrCount("RestaurantsReturned", restaurants.length);
 
   return {
     statusCode: 200,
